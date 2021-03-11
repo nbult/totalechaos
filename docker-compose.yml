@@ -1,0 +1,68 @@
+version: '2.4'
+
+services:
+
+  redis:
+    image: "redis:6-alpine"
+
+  app:
+    build: ./app
+    command: gunicorn totalechaos.wsgi:application --bind 0.0.0.0:8000
+    expose:
+      - 8000
+    volumes:
+      - static:/var/totalechaos/app/static
+      - media:/var/totalechaos/app/media
+    env_file:
+      - ./.env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+    restart: unless-stopped
+
+  celery:
+    build: ./app
+    command: celery -A totalechaos worker -l info
+    env_file:
+      - ./.env
+    depends_on:
+      - app
+
+  celery-beat:
+    build: ./app
+    command: celery -A totalechaos beat -l info
+    env_file:
+      - ./.env
+    depends_on:
+      - app
+
+  db:
+    image: postgres:latest
+    volumes:
+      - db:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "totalechaos" ]
+      interval: 5s
+      retries: 5
+    restart: unless-stopped
+
+  web:
+    build: ./web
+    ports:
+      - 1337:80
+    volumes:
+      - static:/var/totalechaos/app/static
+      - media:/var/totalechaos/app/media
+    depends_on:
+      - app
+
+
+volumes:
+  db:
+  static:
+  media:

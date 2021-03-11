@@ -1,0 +1,19 @@
+# Project
+.env
+db.sqlite3
+celerybeat-*
+
+
+# virtual environment
+.venv
+
+# IDE
+.idea
+*.iml
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
