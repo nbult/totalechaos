@@ -6,6 +6,7 @@ omit =
     manage.py
     totalechaos/asgi.py
     totalechaos/wsgi.py
+    */tests.py
 
 [report]
 fail_under = 95

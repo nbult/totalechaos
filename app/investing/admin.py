@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import gettext as _
-
-from .models import Security, Quote, Scraper
+from .models import Security, Quote
 
 
 @admin.register(Quote)
@@ -31,10 +30,4 @@ class SecurityAdmin(admin.ModelAdmin):
     view_last_date.short_description = _('Latest Date')
 
     list_display = ('name', 'view_last_date', 'view_last_price',)
-    search_fields = ['name', ]
-
-
-@admin.register(Scraper)
-class ScraperAdmin(admin.ModelAdmin):
-    list_display = ('name', 'security', 'url',)
     search_fields = ['name', ]

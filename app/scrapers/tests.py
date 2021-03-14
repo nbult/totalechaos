@@ -1,17 +1,17 @@
 import responses
 from django.test import TransactionTestCase
 
-from .models import Scraper, Security
+from .models import QuoteScraper, Security
 
 
-class ScraperTestCase(TransactionTestCase):
+class QuoteScraperTestCase(TransactionTestCase):
 
     def setUp(self):
         self.security = Security.objects.create(name='Security')
 
     @responses.activate
     def test_update_quotes_not_found_0_quotes(self):
-        scraper = Scraper.objects.create(name="Scraper", security=self.security,
+        scraper = QuoteScraper.objects.create(name="Scraper", security=self.security,
                                          url="https://quote_url", date_key='x', price_key='y')
 
         responses.add(responses.GET, 'https://quote_url',
@@ -23,7 +23,7 @@ class ScraperTestCase(TransactionTestCase):
 
     @responses.activate
     def test_update_quotes_json_creates_3_quotes(self):
-        scraper = Scraper.objects.create(name="Scraper", security=self.security,
+        scraper = QuoteScraper.objects.create(name="Scraper", security=self.security,
                                          url="https://quote_url", date_key='x', price_key='y')
         data = [{"x": '2021-01-01', "y": 10}, {"x": '2021-01-02', "y": 10.5}, {"x": '2021-01-03', "y": 11}]
 
@@ -37,7 +37,7 @@ class ScraperTestCase(TransactionTestCase):
 
     @responses.activate
     def test_update_quotes_invalid_date_key_raises_exception(self):
-        scraper = Scraper.objects.create(name="Scraper", security=self.security,
+        scraper = QuoteScraper.objects.create(name="Scraper", security=self.security,
                                          url="https://quote_url", date_key='not_present', price_key='y')
         data = [{"x": '2021-01-01', "y": 10}]
 
@@ -53,7 +53,7 @@ class ScraperTestCase(TransactionTestCase):
 
     @responses.activate
     def test_update_quotes_invalid_date_key_raises_exception(self):
-        scraper = Scraper.objects.create(name="Scraper", security=self.security,
+        scraper = QuoteScraper.objects.create(name="Scraper", security=self.security,
                                          url="https://quote_url", date_key='x', price_key='not_present')
         data = [{"x": '2021-01-01', "y": 10}]
 
@@ -68,7 +68,7 @@ class ScraperTestCase(TransactionTestCase):
 
     @responses.activate
     def test_update_quotes_matching_regex_creates_3_quotes(self):
-        scraper = Scraper.objects.create(name="Scraper", security=self.security,
+        scraper = QuoteScraper.objects.create(name="Scraper", security=self.security,
                                          url="https://quote_url", date_key='x', price_key='y',
                                          regex="data:\s(\[{.*}+\])")
 
@@ -93,7 +93,7 @@ class ScraperTestCase(TransactionTestCase):
         responses.add(responses.GET, 'https://quote_url',
                       json=data, status=200)
 
-        scraper = Scraper.objects.create(name="Scraper", security=self.security,
+        scraper = QuoteScraper.objects.create(name="Scraper", security=self.security,
                                          url="https://quote_url", date_key='x', price_key='y')
 
         scraper.update_quotes()
