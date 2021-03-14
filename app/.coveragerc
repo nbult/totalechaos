@@ -7,9 +7,9 @@ omit =
     totalechaos/asgi.py
     totalechaos/wsgi.py
     */tests.py
+    */migrations/*.py
 
 [report]
 fail_under = 95
 show_missing = True
-skip_covered = True
 

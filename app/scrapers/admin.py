@@ -1,9 +1,8 @@
 from django.contrib import admin
 
-from .models import QuoteScraper
+from .models import KeyValueScraper
 
 
-@admin.register(QuoteScraper)
+@admin.register(KeyValueScraper)
 class QuoteScraperAdmin(admin.ModelAdmin):
-    list_display = ('security', 'url',)
-    search_fields = ['security__name', ]
+    list_display = ('name', 'url', 'key_path', 'value_path')

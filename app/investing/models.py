@@ -1,5 +1,8 @@
+import moment
 from django.db import models
 from django.utils.translation import gettext as _
+
+from scrapers.models import Scraper, KeyValueScraper
 
 
 class BaseModel(models.Model):
@@ -15,6 +18,9 @@ class Security(BaseModel):
     isin = models.CharField(_('isin'), help_text='International Securities Identification Number', max_length=12,
                             unique=True)
 
+    scraper = models.ForeignKey(KeyValueScraper, verbose_name=_('scraper'), on_delete=models.PROTECT, null=True,
+                                blank=True)
+
     class Meta:
         ordering = ['name']
         verbose_name = _('security')
@@ -23,8 +29,17 @@ class Security(BaseModel):
     def __str__(self):
         return '{0}'.format(self.name)
 
-    def add_quote(self, date, price):
-        pass
+    def download_quotes(self):
+        quotes = sorted(self.scraper.scrape(), key=lambda t: t[0], reverse=True)
+
+        for date, price in quotes:
+
+            quote, created = Quote.objects.get_or_create(security=self,
+                                                         date=moment.date(date).format('YYYY-MM-DD'),
+                                                         defaults={'price': price})
+
+            if not created:
+                break
 
 
 class Quote(BaseModel):
