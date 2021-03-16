@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'investing',
     'scrapers'
-    #'quotes'
 ]
 
 MIDDLEWARE = [
@@ -161,10 +160,10 @@ CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", 'redis://localho
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-# CELERY_IMPORTS = ('module with tasks', )
-# CELERY_BEAT_SCHEDULE = {
-#     'hello': {
-#         'task': 'module.tasks.function',
-#         'schedule': crontab()  # execute every minute
-#     }
-# }
+CELERY_IMPORTS = ('investing.tasks', )
+CELERY_BEAT_SCHEDULE = {
+    'download_quotes': {
+        'task': 'investing.tasks.download_quotes',
+        'schedule': crontab()  # execute every minute
+    }
+}

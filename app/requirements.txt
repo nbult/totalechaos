@@ -8,3 +8,4 @@ redis~=3.5.3
 requests~=2.25.1
 responses~=0.12.1
 moment~=0.12.1
+jsonpath-rw~=1.4.0
